@@ -63,12 +63,18 @@ public class LRSAgentCore {
 					if (awsIsOn.getEnabled().toUpperCase().equals("TRUE")) {
 						destinationFileName = protectedDirs.directories.get(nI).getDestinationPath_AWS().concat(cPureFileName);
 						cCloudProvider = LRSOptionsCloudProvider.AWS.toString();
+						
+						//4* - Send the file
+						sendNewFile(fileName, destinationFileName, cCloudProvider);
 					}
 				
 					//3.2 - If Azure is ON.
 					if (azureIsOn.getEnabled().toUpperCase().equals("TRUE")) {
 						destinationFileName = protectedDirs.directories.get(nI).getDestinationPath_Azure().concat(cPureFileName);
 						cCloudProvider = LRSOptionsCloudProvider.AZURE.toString();
+						
+						//4* - Send the file
+						sendNewFile(fileName, destinationFileName, cCloudProvider);
 					}
 					
 					//3.3 - If Oracle is ON.
@@ -76,35 +82,12 @@ public class LRSAgentCore {
 						destinationFileName = protectedDirs.directories.get(nI).getDestinationPath_Oracle().concat(cPureFileName);
 						cCloudProvider = LRSOptionsCloudProvider.ORACLE.toString();
 						
+						//4* - Send the file
+						sendNewFile(fileName, destinationFileName, cCloudProvider);
 					}
 										
-					//4* - Verify if file already exists. If yes, don't send again.
-					try {
-						UriComponentsBuilder builderURI = UriComponentsBuilder.fromHttpUrl(cBaseURI.concat("/queue/v1/getbyfullfilename")).queryParam("fullfilename", fileName);
-						LRSQueueFileServiceModel fileExists = restTemplate.getForObject(builderURI.toUriString(), LRSQueueFileServiceModel.class);
-						if (fileExists.directories.size() <= 0) {
-							
-							//5* Send filename to LRSManager to be will mapped by backup engine.
-							try {
-								LRSQueueFileForm filetoUpload = new LRSQueueFileForm();
-								filetoUpload.setOriginalfullname(fileName);
-								filetoUpload.setDestinationFileName(destinationFileName);
-								filetoUpload.setCloudProvider(cCloudProvider);
-								LRSQueueFileServiceModel response = restTemplate.postForObject(cBaseURI.concat("/queue/v1/inserttolist"), filetoUpload, LRSQueueFileServiceModel.class);
-								
-								new LRSConsoleOut("Arquivo ".concat(fileName).concat(" enviado com sucesso para o LRS Manager."));	
-							}
-							catch(Exception e) {
-								new LRSConsoleOut("Arquivo ".concat(fileName).concat(" desprezado. Ja mapeado no ambiente LRS Manager."));
-							}
-						} else {
-							new LRSConsoleOut("Arquivo ".concat(fileName).concat(" desprezado. Ja mapeado no ambiente LRS Manager."));
-						}
-					}
-					catch(Exception e) {
-						new LRSConsoleOut("WARNING: Something was wrong while trying map file ".concat(fileName).concat(" We will try again in next cycle!"));
-					}
-					Thread.sleep(1000);
+					
+					
 				}
 				
 			}
@@ -113,6 +96,40 @@ public class LRSAgentCore {
 			
 		}
 		
+	}
+	
+	private void sendNewFile(String fileName, String destinationFileName, String cCloudProvider) throws InterruptedException {
+		
+		try {
+			//Check if the file already exists in LRS Manager
+			RestTemplate restTemplate = new RestTemplate();
+			UriComponentsBuilder builderURI = UriComponentsBuilder.fromHttpUrl(cBaseURI.concat("/queue/v1/getbyfullfilename")).queryParam("fullfilename", fileName);
+			LRSQueueFileServiceModel fileExists = restTemplate.getForObject(builderURI.toUriString(), LRSQueueFileServiceModel.class);
+			if (fileExists.directories.size() <= 0) {
+				
+				//5* Send filename to LRSManager to be will mapped by backup engine.
+				try {
+					LRSQueueFileForm filetoUpload = new LRSQueueFileForm();
+					filetoUpload.setOriginalfullname(fileName);
+					filetoUpload.setDestinationFileName(destinationFileName);
+					filetoUpload.setCloudProvider(cCloudProvider);
+					LRSQueueFileServiceModel response = restTemplate.postForObject(cBaseURI.concat("/queue/v1/inserttolist"), filetoUpload, LRSQueueFileServiceModel.class);
+					
+					new LRSConsoleOut("Arquivo ".concat(fileName).concat(" enviado com sucesso para o LRS Manager."));	
+				}
+				catch(Exception e) {
+					new LRSConsoleOut("Arquivo ".concat(fileName).concat(" desprezado. Ja mapeado no ambiente LRS Manager."));
+				}
+			} else {
+				new LRSConsoleOut("Arquivo ".concat(fileName).concat(" desprezado. Ja mapeado no ambiente LRS Manager."));
+			}
+		}
+		catch(Exception e) {
+			new LRSConsoleOut("WARNING: Something was wrong while trying map file ".concat(fileName).concat(" We will try again in next cycle!"));
+		}
+		Thread.sleep(1000);
+		
+		return;
 	}
 
 		
