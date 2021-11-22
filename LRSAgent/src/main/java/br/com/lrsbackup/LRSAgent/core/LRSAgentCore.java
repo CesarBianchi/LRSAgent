@@ -1,9 +1,13 @@
 package br.com.lrsbackup.LRSAgent.core;
 
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.attribute.BasicFileAttributeView;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
@@ -12,6 +16,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import br.com.lrsbackup.LRSAgent.utils.LRSFileDetails;
 import br.com.lrsbackup.LRSManager.enums.LRSOptionsCloudProvider;
 import br.com.lrsbackup.LRSManager.persistence.controller.form.LRSQueueFileForm;
 import br.com.lrsbackup.LRSManager.services.model.LRSConfigServiceModel;
@@ -25,7 +30,7 @@ public class LRSAgentCore {
 	private String cBaseURI = new String("http://192.168.0.101:6001/LRSManager");
 	
 	
-	public void startMonitor() throws InterruptedException, IOException {
+	public void startMonitor() throws InterruptedException, IOException{
 		
 		while (true) {
 			
@@ -42,8 +47,8 @@ public class LRSAgentCore {
 			for (int nI = 0; nI < protectedDirs.directories.size(); nI++) {
 				
 				String cDirPath = protectedDirs.directories.get(nI).getOriginPath();
-				new LRSConsoleOut("Checking directory ".concat(cDirPath));
-				
+				new LRSConsoleOut("WORKING OVER DIRECTORY: ".concat(cDirPath));
+
 				List<String> listOfFiles = new ArrayList<>();
 				Files.walk(Paths.get(cDirPath))
 		        .filter(Files::isRegularFile)
@@ -53,7 +58,8 @@ public class LRSAgentCore {
 				for (int nJ = 0; nJ < listOfFiles.size(); nJ++) {
 					
 					String fileName = listOfFiles.get(nJ);
-					File moreFileDetails = new File(fileName);
+					
+					LRSFileDetails fileDetails = new LRSFileDetails(fileName);
 					
 					String cPureFileName = fileName.replaceAll(cDirPath.concat("/"),"");
 					String destinationFileName = new String();
@@ -65,7 +71,7 @@ public class LRSAgentCore {
 						cCloudProvider = LRSOptionsCloudProvider.AWS.toString();
 						
 						//4* - Send the file
-						sendNewFile(fileName, destinationFileName, cCloudProvider);
+						sendNewFile(fileName, destinationFileName, cCloudProvider,fileDetails);
 					}
 				
 					//3.2 - If Azure is ON.
@@ -74,7 +80,7 @@ public class LRSAgentCore {
 						cCloudProvider = LRSOptionsCloudProvider.AZURE.toString();
 						
 						//4* - Send the file
-						sendNewFile(fileName, destinationFileName, cCloudProvider);
+						sendNewFile(fileName, destinationFileName, cCloudProvider,fileDetails);
 					}
 					
 					//3.3 - If Oracle is ON.
@@ -83,10 +89,8 @@ public class LRSAgentCore {
 						cCloudProvider = LRSOptionsCloudProvider.ORACLE.toString();
 						
 						//4* - Send the file
-						sendNewFile(fileName, destinationFileName, cCloudProvider);
+						sendNewFile(fileName, destinationFileName, cCloudProvider,fileDetails);
 					}
-										
-					
 					
 				}
 				
@@ -98,7 +102,7 @@ public class LRSAgentCore {
 		
 	}
 	
-	private void sendNewFile(String fileName, String destinationFileName, String cCloudProvider) throws InterruptedException {
+	private void sendNewFile(String fileName, String destinationFileName, String cCloudProvider, LRSFileDetails fileDetails) throws InterruptedException {
 		
 		try {
 			//Check if the file already exists in LRS Manager
@@ -113,19 +117,21 @@ public class LRSAgentCore {
 					filetoUpload.setOriginalfullname(fileName);
 					filetoUpload.setDestinationFileName(destinationFileName);
 					filetoUpload.setCloudProvider(cCloudProvider);
+					filetoUpload.setCreationDateTime(fileDetails.getCreationDateTime());
+					filetoUpload.setSize(fileDetails.getSize());
 					LRSQueueFileServiceModel response = restTemplate.postForObject(cBaseURI.concat("/queue/v1/inserttolist"), filetoUpload, LRSQueueFileServiceModel.class);
 					
-					new LRSConsoleOut("Arquivo ".concat(fileName).concat(" enviado com sucesso para o LRS Manager."));	
+					new LRSConsoleOut("File ".concat(fileName).concat(" successfully sent LRS Manager."));	
 				}
 				catch(Exception e) {
-					new LRSConsoleOut("Arquivo ".concat(fileName).concat(" desprezado. Ja mapeado no ambiente LRS Manager."));
+					new LRSConsoleOut("File ".concat(fileName).concat(" skipped. Already present in LRS Manager environment."));
 				}
 			} else {
-				new LRSConsoleOut("Arquivo ".concat(fileName).concat(" desprezado. Ja mapeado no ambiente LRS Manager."));
+				new LRSConsoleOut("File ".concat(fileName).concat(" skipped. Already present in LRS Manager environment."));
 			}
 		}
 		catch(Exception e) {
-			new LRSConsoleOut("WARNING: Something was wrong while trying map file ".concat(fileName).concat(" We will try again in next cycle!"));
+			new LRSConsoleOut("WARNING: Something was wrong while trying sent file ".concat(fileName).concat(" We will try again in next working cycle"));
 		}
 		Thread.sleep(1000);
 		
