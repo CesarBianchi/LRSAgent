@@ -23,6 +23,7 @@ import br.com.lrsbackup.LRSManager.services.model.LRSConfigServiceModel;
 import br.com.lrsbackup.LRSManager.services.model.LRSProtectedDirServiceModel;
 import br.com.lrsbackup.LRSManager.services.model.LRSQueueFileServiceModel;
 import br.com.lrsbackup.LRSManager.util.LRSConsoleOut;
+import br.com.lrsbackup.LRSManager.util.LRSActivePublicClouds;
 
 public class LRSAgentCore {
 	
@@ -34,14 +35,25 @@ public class LRSAgentCore {
 		
 		while (true) {
 			
+			new LRSConsoleOut("");
+			new LRSConsoleOut("");
+			new LRSConsoleOut("##############################################################################################");	
+			new LRSConsoleOut("################################ BEGIN FILE MONITOR CYCLE ####################################");
+			new LRSConsoleOut("##############################################################################################");
+			new LRSConsoleOut("");
+			
 			//1* - Get the list of protected directories
 			RestTemplate restTemplate = new RestTemplate();
 			LRSProtectedDirServiceModel protectedDirs = restTemplate.getForObject(cBaseURI.concat("/protecteddirs/v1/getall"), LRSProtectedDirServiceModel.class);
+
+			
 			
 			//2* - Get what cloud providers is On.
-			LRSConfigServiceModel awsIsOn = restTemplate.getForObject(cBaseURI.concat("/configs/v1/awsisenabled"), LRSConfigServiceModel.class); 
-			LRSConfigServiceModel azureIsOn = restTemplate.getForObject(cBaseURI.concat("/configs/v1/azureisenabled"), LRSConfigServiceModel.class); 
-			LRSConfigServiceModel oracleIsOn = restTemplate.getForObject(cBaseURI.concat("/configs/v1/oracleisenabled"), LRSConfigServiceModel.class); 
+			LRSActivePublicClouds publicClouds = new LRSActivePublicClouds();
+			new LRSConsoleOut("AWS IS ON: ".concat(String.valueOf(publicClouds.isAwsOn()).toUpperCase()));
+			new LRSConsoleOut("AZURE IS ON: ".concat(String.valueOf(publicClouds.isAzureOn()).toUpperCase()));
+			new LRSConsoleOut("ORACLE IS ON: ".concat(String.valueOf(publicClouds.isOracleOn()).toUpperCase()));
+			new LRSConsoleOut("TOTAL LOCAL DIRECTORIES MONITORED: ".concat(Integer.toString(protectedDirs.directories.size())));
 			
 			//2* For each directory returned, verify all files present.
 			for (int nI = 0; nI < protectedDirs.directories.size(); nI++) {
@@ -66,7 +78,7 @@ public class LRSAgentCore {
 					String cCloudProvider = new String();
 					
 					//3.1 - If AWS is ON.
-					if (awsIsOn.getEnabled().toUpperCase().equals("TRUE")) {
+					if (publicClouds.isAwsOn()) {
 						destinationFileName = protectedDirs.directories.get(nI).getDestinationPath_AWS().concat(cPureFileName);
 						cCloudProvider = LRSOptionsCloudProvider.AWS.toString();
 						
@@ -75,7 +87,7 @@ public class LRSAgentCore {
 					}
 				
 					//3.2 - If Azure is ON.
-					if (azureIsOn.getEnabled().toUpperCase().equals("TRUE")) {
+					if (publicClouds.isAzureOn()) {
 						destinationFileName = protectedDirs.directories.get(nI).getDestinationPath_Azure().concat(cPureFileName);
 						cCloudProvider = LRSOptionsCloudProvider.AZURE.toString();
 						
@@ -84,7 +96,7 @@ public class LRSAgentCore {
 					}
 					
 					//3.3 - If Oracle is ON.
-					if (oracleIsOn.getEnabled().toUpperCase().equals("TRUE")) {
+					if (publicClouds.isOracleOn()) {
 						destinationFileName = protectedDirs.directories.get(nI).getDestinationPath_Oracle().concat(cPureFileName);
 						cCloudProvider = LRSOptionsCloudProvider.ORACLE.toString();
 						
@@ -96,7 +108,7 @@ public class LRSAgentCore {
 				
 			}
 			
-			Thread.sleep(5000);
+			Thread.sleep(1200000);
 			
 		}
 		
