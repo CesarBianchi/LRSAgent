@@ -14,7 +14,25 @@ public class LRSAgent {
 		LRSWelcomeShow welcomeShow = new LRSWelcomeShow();
 		welcomeShow.showConsoleWelcomeMessage();
 		
+		//Start agent to check file system
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+            	try {
+					startFileSystemAgent();
+				} catch (InterruptedException e) {
+					//e.printStackTrace();
+				}
+            }
+        }).start();
+        
+        //
+        
+        
+    }
 		
+		
+	private static void startFileSystemAgent() throws InterruptedException {
 		
 		LRSAgentCore newAgent = new LRSAgentCore();
 		while (true) {
@@ -26,5 +44,8 @@ public class LRSAgent {
 			}
 			Thread.sleep(10000);
 		}
-}
+		
+	}
+	
+	
 }
