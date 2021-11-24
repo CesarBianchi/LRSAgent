@@ -66,6 +66,8 @@ public class LRSAgentCore {
 		        .filter(Files::isRegularFile)
 		        .forEach(x -> listOfFiles.add(x.toString()));
 		
+				new LRSConsoleOut("TOTAL FILES OF DIRECTORY: ".concat(Integer.toString(listOfFiles.size())));
+				
 				//3* For each file, add to LRSManager
 				for (int nJ = 0; nJ < listOfFiles.size(); nJ++) {
 					
@@ -108,7 +110,8 @@ public class LRSAgentCore {
 				
 			}
 			
-			Thread.sleep(1200000);
+			new LRSConsoleOut("Sleeping time! I'll return to working in three minutes. Be patience and drink a beer!");	
+			Thread.sleep(180000);
 			
 		}
 		
@@ -131,9 +134,10 @@ public class LRSAgentCore {
 					filetoUpload.setCloudProvider(cCloudProvider);
 					filetoUpload.setCreationDateTime(fileDetails.getCreationDateTime());
 					filetoUpload.setSize(fileDetails.getSize());
+					
 					LRSQueueFileServiceModel response = restTemplate.postForObject(cBaseURI.concat("/queue/v1/inserttolist"), filetoUpload, LRSQueueFileServiceModel.class);
 					
-					new LRSConsoleOut("File ".concat(fileName).concat(" successfully sent LRS Manager."));	
+					new LRSConsoleOut("File ".concat(fileName).concat(" successfully sent to LRS Manager Service."));	
 				}
 				catch(Exception e) {
 					new LRSConsoleOut("File ".concat(fileName).concat(" skipped. Already present in LRS Manager environment."));
@@ -145,7 +149,7 @@ public class LRSAgentCore {
 		catch(Exception e) {
 			new LRSConsoleOut("WARNING: Something was wrong while trying sent file ".concat(fileName).concat(" We will try again in next working cycle"));
 		}
-		Thread.sleep(1000);
+		Thread.sleep(500);
 		
 		return;
 	}
