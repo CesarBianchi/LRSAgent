@@ -26,8 +26,20 @@ public class LRSAgent {
             }
         }).start();
         
-        //
         
+        
+		//Start agent to check files to upload
+		new Thread(new Runnable() {
+		    @Override
+		    public void run() {
+		    	try {
+					startUploadProcess();
+				} catch (InterruptedException e) {
+					//e.printStackTrace();
+				}
+		    }
+		}).start();
+		        
         
     }
 		
@@ -38,7 +50,7 @@ public class LRSAgent {
 		while (true) {
   
 			try {
-				newAgent.startMonitor();
+				newAgent.startUploadProcess();
 			} catch(Exception e) {
 				new LRSConsoleOut("WARNING: LRS Manager not found or not ready");
 			}
@@ -46,6 +58,13 @@ public class LRSAgent {
 		}
 		
 	}
+	
+	
+	private static void startUploadProcess() throws InterruptedException {
+		
+	}
+	
+	
 	
 	
 }

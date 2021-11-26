@@ -32,6 +32,7 @@ public class LRSAgentCore {
 	
 	
 	public void startMonitor() throws InterruptedException, IOException{
+		RestTemplate restTemplate = new RestTemplate();
 		
 		while (true) {
 			
@@ -43,10 +44,7 @@ public class LRSAgentCore {
 			new LRSConsoleOut("");
 			
 			//1* - Get the list of protected directories
-			RestTemplate restTemplate = new RestTemplate();
 			LRSProtectedDirServiceModel protectedDirs = restTemplate.getForObject(cBaseURI.concat("/protecteddirs/v1/getall"), LRSProtectedDirServiceModel.class);
-
-			
 			
 			//2* - Get what cloud providers is On.
 			LRSActivePublicClouds publicClouds = new LRSActivePublicClouds();
@@ -154,5 +152,22 @@ public class LRSAgentCore {
 		return;
 	}
 
+	public void startUploadProcess() {
 		
+		RestTemplate restTemplate = new RestTemplate();
+		
+		while (true) {
+			new LRSConsoleOut("");
+			new LRSConsoleOut("");
+			new LRSConsoleOut("################################################################################################");	
+			new LRSConsoleOut("################################ BEGIN UPLOAD PROCESS CYCLE ####################################");
+			new LRSConsoleOut("################################################################################################");
+			new LRSConsoleOut("");
+			
+			//1* Check if exists file to upload.
+			//TODO TODO TODO
+
+		}
+		
+	}
 }
