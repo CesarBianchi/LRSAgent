@@ -109,7 +109,7 @@ public class LRSAgentCore {
 			}
 			
 			new LRSConsoleOut("Sleeping time! I'll return to working in three minutes. Be patience and drink a beer!");	
-			Thread.sleep(180000);
+			Thread.sleep(1800000);
 			
 		}
 		
