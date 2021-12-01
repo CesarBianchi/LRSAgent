@@ -1,31 +1,22 @@
 package br.com.lrsbackup.LRSAgent.core;
 
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.attribute.BasicFileAttributeView;
-import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Stream;
-
-import org.springframework.http.HttpEntity;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
-
 import br.com.lrsbackup.LRSAgent.utils.LRSFileDetails;
 import br.com.lrsbackup.LRSManager.enums.LRSOptionsCloudProvider;
 import br.com.lrsbackup.LRSManager.persistence.controller.form.LRSQueueFileForm;
-import br.com.lrsbackup.LRSManager.services.model.LRSConfigServiceModel;
 import br.com.lrsbackup.LRSManager.services.model.LRSProtectedDirServiceModel;
 import br.com.lrsbackup.LRSManager.services.model.LRSQueueFileServiceModel;
 import br.com.lrsbackup.LRSManager.util.LRSConsoleOut;
 import br.com.lrsbackup.LRSManager.util.LRSActivePublicClouds;
 
-public class LRSAgentCore {
+public class LRSAgentFileSystem {
 	
 
 	private String cBaseURI = new String("http://192.168.0.101:6001/LRSManager");
@@ -152,22 +143,7 @@ public class LRSAgentCore {
 		return;
 	}
 
-	public void startUploadProcess() {
-		
-		RestTemplate restTemplate = new RestTemplate();
-		
-		while (true) {
-			new LRSConsoleOut("");
-			new LRSConsoleOut("");
-			new LRSConsoleOut("################################################################################################");	
-			new LRSConsoleOut("################################ BEGIN UPLOAD PROCESS CYCLE ####################################");
-			new LRSConsoleOut("################################################################################################");
-			new LRSConsoleOut("");
-			
-			//1* Check if exists file to upload.
-			//TODO TODO TODO
 
-		}
 		
-	}
+	
 }
