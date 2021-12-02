@@ -24,5 +24,6 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="src" path="/LRSManager"/>
+	<classpathentry kind="src" path="/LRSUploadEngine"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

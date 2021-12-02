@@ -9,6 +9,7 @@ import java.util.List;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 import br.com.lrsbackup.LRSAgent.utils.LRSFileDetails;
+import br.com.lrsbackup.LRSAgent.utils.LRSManagerAddress;
 import br.com.lrsbackup.LRSManager.enums.LRSOptionsCloudProvider;
 import br.com.lrsbackup.LRSManager.persistence.controller.form.LRSQueueFileForm;
 import br.com.lrsbackup.LRSManager.services.model.LRSProtectedDirServiceModel;
@@ -19,7 +20,7 @@ import br.com.lrsbackup.LRSManager.util.LRSActivePublicClouds;
 public class LRSAgentFileSystem {
 	
 
-	private String cBaseURI = new String("http://192.168.0.101:6001/LRSManager");
+	private String cBaseURI = new LRSManagerAddress().getLRSManagerURI();
 	
 	
 	public void startMonitor() throws InterruptedException, IOException{
