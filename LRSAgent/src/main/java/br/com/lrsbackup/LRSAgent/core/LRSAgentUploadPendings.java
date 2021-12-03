@@ -4,7 +4,6 @@ import org.springframework.web.client.RestTemplate;
 
 import br.com.lrsbackup.LRSAgent.utils.LRSManagerAddress;
 import br.com.lrsbackup.LRSManager.util.LRSConsoleOut;
-import br.com.lrsbackup.LRSUploadEngine.services.model.LRSUploadFileServiceModel;
 
 public class LRSAgentUploadPendings {
 
