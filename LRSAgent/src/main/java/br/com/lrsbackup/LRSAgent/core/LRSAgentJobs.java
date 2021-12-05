@@ -10,7 +10,7 @@ public class LRSAgentJobs {
 		
 		LRSWelcomeShow welcomeShow = new LRSWelcomeShow();
 		welcomeShow.showConsoleWelcomeMessage();
-		/*
+		
 		//Start agent to check file system
         new Thread(new Runnable() {
             @Override
@@ -23,7 +23,7 @@ public class LRSAgentJobs {
             }
         }).start();
         
-        */
+        
         
 		//Start agent to check files to upload
 		new Thread(new Runnable() {

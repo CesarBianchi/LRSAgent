@@ -8,6 +8,8 @@ import java.nio.file.attribute.BasicFileAttributeView;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.time.LocalDateTime;
 
+import br.com.lrsbackup.LRSManager.util.LRSConsoleOut;
+
 public class LRSFileDetails {
 	private LocalDateTime creationDateTime;;
 	private long size;
@@ -22,16 +24,21 @@ public class LRSFileDetails {
 	}
 
 	public LRSFileDetails(String fileName) throws IOException {
-				
-		Path file = Paths.get(fileName);
-		BasicFileAttributeView fileAttributeView = Files.getFileAttributeView(file, BasicFileAttributeView.class);
-        
-        //get basic attributes
-        BasicFileAttributes basicFileAttributes = fileAttributeView.readAttributes();
-        
-        this.creationDateTime = LocalDateTime.parse(basicFileAttributes.creationTime().toString().substring(0, 19));
-        this.size = Files.size(file);
 		
+		try {
+		
+			Path file = Paths.get(fileName);
+			BasicFileAttributeView fileAttributeView = Files.getFileAttributeView(file, BasicFileAttributeView.class);
+	        
+	        //get basic attributes
+	        BasicFileAttributes basicFileAttributes = fileAttributeView.readAttributes();
+	        
+	        this.creationDateTime = LocalDateTime.parse(basicFileAttributes.creationTime().toString().substring(0, 19));
+	        this.size = Files.size(file);
+		} catch(Exception e) {
+			new LRSConsoleOut("Failed while try get file atributes of: ".concat(fileName));
+			new LRSConsoleOut(e);
+		}
 	}
 
 
