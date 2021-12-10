@@ -32,7 +32,7 @@ public class LRSAgentUploadPendings {
 				new LRSConsoleOut("UPLOAD CYCLE MESSAGE: ".concat(uploadsPending.getMessages().getMessages().get(nI).getMessage()));	
 			}
 			
-			Thread.sleep(180000);
+			Thread.sleep(3600000);
 		}
 	}
 	
