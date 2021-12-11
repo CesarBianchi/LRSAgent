@@ -1,4 +1,4 @@
-package br.com.lrsbackup.LRSAgent.core;
+package br.com.lrsbackup.LRSAgent.model;
 
 public class LRSUploadFileForm {
 	

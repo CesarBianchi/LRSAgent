@@ -1,5 +1,4 @@
-package br.com.lrsbackup.LRSAgent.core;
-
+package br.com.lrsbackup.LRSAgent.model;
 
 public class LRSUploadFileFormDAO {
 	private String originalFileName = new String();

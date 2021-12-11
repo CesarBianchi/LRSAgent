@@ -68,6 +68,7 @@ public class LRSAgentFileSystem {
 					String cPureFileName = fileName.replaceAll(cDirPath.concat("/"),"");
 					String destinationFileName = new String();
 					String cCloudProvider = new String();
+					String storageRepoName = protectedDirs.directories.get(nI).getStorageRepositoryName();
 					
 					//3.1 - If AWS is ON.
 					if (publicClouds.isAwsOn()) {
@@ -75,7 +76,7 @@ public class LRSAgentFileSystem {
 						cCloudProvider = LRSOptionsCloudProvider.AWS.toString();
 						
 						//4* - Send the file
-						sendNewFile(fileName, destinationFileName, cCloudProvider,fileDetails);
+						sendNewFile(fileName, destinationFileName, cCloudProvider,fileDetails,storageRepoName);
 					}
 				
 					//3.2 - If Azure is ON.
@@ -84,7 +85,7 @@ public class LRSAgentFileSystem {
 						cCloudProvider = LRSOptionsCloudProvider.AZURE.toString();
 						
 						//4* - Send the file
-						sendNewFile(fileName, destinationFileName, cCloudProvider,fileDetails);
+						sendNewFile(fileName, destinationFileName, cCloudProvider,fileDetails,storageRepoName);
 					}
 					
 					//3.3 - If Oracle is ON.
@@ -93,7 +94,7 @@ public class LRSAgentFileSystem {
 						cCloudProvider = LRSOptionsCloudProvider.ORACLE.toString();
 						
 						//4* - Send the file
-						sendNewFile(fileName, destinationFileName, cCloudProvider,fileDetails);
+						sendNewFile(fileName, destinationFileName, cCloudProvider,fileDetails,storageRepoName);
 					}
 					
 				}
@@ -107,7 +108,7 @@ public class LRSAgentFileSystem {
 		
 	}
 	
-	private void sendNewFile(String fileName, String destinationFileName, String cCloudProvider, LRSFileDetails fileDetails) throws InterruptedException {
+	private void sendNewFile(String fileName, String destinationFileName, String cCloudProvider, LRSFileDetails fileDetails, String storageRepoName) throws InterruptedException {
 		
 		try {
 			//Check if the file already exists in LRS Manager
@@ -123,6 +124,7 @@ public class LRSAgentFileSystem {
 					filetoUpload.setDestinationFileName(destinationFileName);
 					filetoUpload.setCloudProvider(cCloudProvider);
 					filetoUpload.setCreationDateTime(fileDetails.getCreationDateTime());
+					filetoUpload.setStorageRepoName(storageRepoName);
 					filetoUpload.setSize(fileDetails.getSize());
 					
 					LRSQueueFileServiceModel response = restTemplate.postForObject(cBaseURI.concat("/queue/v1/inserttolist"), filetoUpload, LRSQueueFileServiceModel.class);

@@ -2,6 +2,7 @@ package br.com.lrsbackup.LRSAgent.core;
 
 import org.springframework.web.client.RestTemplate;
 
+import br.com.lrsbackup.LRSAgent.model.LRSUploadFileServiceModel;
 import br.com.lrsbackup.LRSAgent.utils.LRSManagerAddress;
 import br.com.lrsbackup.LRSManager.util.LRSConsoleOut;
 

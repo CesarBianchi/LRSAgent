@@ -1,4 +1,4 @@
-package br.com.lrsbackup.LRSAgent.core;
+package br.com.lrsbackup.LRSAgent.model;
 
 import br.com.lrsbackup.LRSManager.util.LRSResponseInfo;
 import br.com.lrsbackup.LRSManager.util.LRSResponseMessages;
