@@ -15,6 +15,7 @@ import br.com.lrsbackup.LRSManager.persistence.controller.form.LRSQueueFileForm;
 import br.com.lrsbackup.LRSManager.services.model.LRSProtectedDirServiceModel;
 import br.com.lrsbackup.LRSManager.services.model.LRSQueueFileServiceModel;
 import br.com.lrsbackup.LRSManager.util.LRSConsoleOut;
+import br.com.lrsbackup.LRSManager.util.LRSOperationalSystem;
 import br.com.lrsbackup.LRSManager.util.LRSActivePublicClouds;
 
 public class LRSAgentFileSystem {
@@ -66,35 +67,36 @@ public class LRSAgentFileSystem {
 					LRSFileDetails fileDetails = new LRSFileDetails(fileName);
 					
 					String cPureFileName = fileName.replaceAll(cDirPath.concat("/"),"");
-					String destinationFileName = new String();
-					String cCloudProvider = new String();
 					String storageRepoName = protectedDirs.directories.get(nI).getStorageRepositoryName();
+					String destinationFileName = this.getDestinationPathCleaned(storageRepoName,fileName); 
+					String storageURI = new String();
+					String cCloudProvider = new String();
 					
 					//3.1 - If AWS is ON.
 					if (publicClouds.isAwsOn()) {
-						destinationFileName = protectedDirs.directories.get(nI).getDestinationPath_AWS().concat(cPureFileName);
+						storageURI = protectedDirs.directories.get(nI).getURIPath_AWS().trim().concat(cPureFileName);
 						cCloudProvider = LRSOptionsCloudProvider.AWS.toString();
 						
 						//4* - Send the file
-						sendNewFile(fileName, destinationFileName, cCloudProvider,fileDetails,storageRepoName);
+						sendNewFile(fileName, destinationFileName, cCloudProvider,fileDetails,storageRepoName,storageURI);
 					}
 				
 					//3.2 - If Azure is ON.
 					if (publicClouds.isAzureOn()) {
-						destinationFileName = protectedDirs.directories.get(nI).getDestinationPath_Azure().concat(cPureFileName);
+						storageURI = protectedDirs.directories.get(nI).getURIPath_Azure().trim().concat(cPureFileName);
 						cCloudProvider = LRSOptionsCloudProvider.AZURE.toString();
 						
 						//4* - Send the file
-						sendNewFile(fileName, destinationFileName, cCloudProvider,fileDetails,storageRepoName);
+						sendNewFile(fileName, destinationFileName, cCloudProvider,fileDetails,storageRepoName,storageURI);
 					}
 					
 					//3.3 - If Oracle is ON.
 					if (publicClouds.isOracleOn()) {
-						destinationFileName = protectedDirs.directories.get(nI).getDestinationPath_Oracle().concat(cPureFileName);
+						storageURI = protectedDirs.directories.get(nI).getURIPath_Oracle().trim().concat(cPureFileName);
 						cCloudProvider = LRSOptionsCloudProvider.ORACLE.toString();
 						
 						//4* - Send the file
-						sendNewFile(fileName, destinationFileName, cCloudProvider,fileDetails,storageRepoName);
+						sendNewFile(fileName, destinationFileName, cCloudProvider,fileDetails,storageRepoName,storageURI);
 					}
 					
 				}
@@ -108,7 +110,7 @@ public class LRSAgentFileSystem {
 		
 	}
 	
-	private void sendNewFile(String fileName, String destinationFileName, String cCloudProvider, LRSFileDetails fileDetails, String storageRepoName) throws InterruptedException {
+	private void sendNewFile(String fileName, String destinationFileName, String cCloudProvider, LRSFileDetails fileDetails, String storageRepoName, String storageURI) throws InterruptedException {
 		
 		try {
 			//Check if the file already exists in LRS Manager
@@ -125,6 +127,7 @@ public class LRSAgentFileSystem {
 					filetoUpload.setCloudProvider(cCloudProvider);
 					filetoUpload.setCreationDateTime(fileDetails.getCreationDateTime());
 					filetoUpload.setStorageRepoName(storageRepoName);
+					filetoUpload.setStorageURI(storageURI);
 					filetoUpload.setSize(fileDetails.getSize());
 					
 					LRSQueueFileServiceModel response = restTemplate.postForObject(cBaseURI.concat("/queue/v1/inserttolist"), filetoUpload, LRSQueueFileServiceModel.class);
@@ -146,4 +149,29 @@ public class LRSAgentFileSystem {
 		return;
 	}
 
+	private String getDestinationPathCleaned(String storageRepoName, String absoluteFileName) {
+		boolean lFound = false;
+		String delimiter = new LRSOperationalSystem().getFilePathSeparator();
+		String destinationPath = new String(delimiter);
+		String[] directoriesOfPath = absoluteFileName.split(delimiter);
+	
+		for (int nI = 0;nI< directoriesOfPath.length; nI++ ) {
+			
+			if (!lFound) {
+				if (directoriesOfPath[nI].trim().toUpperCase().equals(storageRepoName.trim().toUpperCase())) {
+					lFound = true;
+				}
+			} else {
+				destinationPath = destinationPath.concat(directoriesOfPath[nI]);
+						
+				if (nI != (directoriesOfPath.length - 1)) {
+					destinationPath = destinationPath.concat(delimiter);
+				}
+						
+			}
+		}
+		
+		return destinationPath;
+	}
+	
 }
