@@ -1,5 +1,6 @@
 package br.com.lrsbackup.LRSAgent.model;
 
+import br.com.lrsbackup.LRSManager.services.model.LRSUploadFileFormDAO;
 import br.com.lrsbackup.LRSManager.util.LRSResponseInfo;
 import br.com.lrsbackup.LRSManager.util.LRSResponseMessages;
 

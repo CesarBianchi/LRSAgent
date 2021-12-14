@@ -10,6 +10,7 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 import br.com.lrsbackup.LRSAgent.utils.LRSFileDetails;
 import br.com.lrsbackup.LRSAgent.utils.LRSManagerAddress;
+import br.com.lrsbackup.LRSAgent.utils.LRSRenameFileLibrary;
 import br.com.lrsbackup.LRSManager.enums.LRSOptionsCloudProvider;
 import br.com.lrsbackup.LRSManager.persistence.controller.form.LRSQueueFileForm;
 import br.com.lrsbackup.LRSManager.services.model.LRSProtectedDirServiceModel;
@@ -22,7 +23,12 @@ public class LRSAgentFileSystem {
 	
 
 	private String cBaseURI = new LRSManagerAddress().getLRSManagerURI();
+	public boolean renameFilesIsActive = false;
 	
+	public LRSAgentFileSystem(boolean renameFiles) {
+		super();
+		this.renameFilesIsActive = renameFiles;
+	}
 	
 	public void startMonitor() throws InterruptedException, IOException{
 		RestTemplate restTemplate = new RestTemplate();
@@ -52,6 +58,13 @@ public class LRSAgentFileSystem {
 				String cDirPath = protectedDirs.directories.get(nI).getOriginPath();
 				new LRSConsoleOut("WORKING OVER DIRECTORY: ".concat(cDirPath));
 
+				//If the option to rename special chars in any file is active, then check all inside protected dir and rename
+				if (this.renameFilesIsActive) {
+					LRSRenameFileLibrary filesToRename = new LRSRenameFileLibrary();
+					filesToRename.fixDir(cDirPath);
+				}
+				
+				//Get all files present inside protected dir
 				List<String> listOfFiles = new ArrayList<>();
 				Files.walk(Paths.get(cDirPath))
 		        .filter(Files::isRegularFile)
@@ -110,6 +123,8 @@ public class LRSAgentFileSystem {
 		
 	}
 	
+
+
 	private void sendNewFile(String fileName, String destinationFileName, String cCloudProvider, LRSFileDetails fileDetails, String storageRepoName, String storageURI) throws InterruptedException {
 		
 		try {
