@@ -29,7 +29,7 @@ public class LRSAgentJobs {
             	try {
 					startFileSystemAgent();
 				} catch (InterruptedException e) {
-					//e.printStackTrace();
+					e.printStackTrace();
 				}
             }
         }).start();
@@ -43,7 +43,7 @@ public class LRSAgentJobs {
 		    	try {
 					startUploadProcess();
 				} catch (InterruptedException e) {
-					//e.printStackTrace();
+					e.printStackTrace();
 				}
 		    }
 		}).start();

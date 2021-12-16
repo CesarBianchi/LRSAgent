@@ -63,8 +63,8 @@ public class LRSRenameFileLibrary {
 
 		
 		//Add in the same list the same chars in Upper Case!
-		ArrayList<LRSSpecialCharsTranslate> lowerChars = specialCharsList;
-		for (int nI=0; nI< specialCharsList.size(); nI++) {
+		ArrayList<LRSSpecialCharsTranslate> lowerChars = (ArrayList<LRSSpecialCharsTranslate>) specialCharsList.clone();
+		for (int nI=0; nI< lowerChars.size(); nI++) {
 			
 			lowerChar = lowerChars.get(nI);
 			upperChar.setCharFrom(lowerChar.getCharFrom().toUpperCase());
@@ -80,12 +80,12 @@ public class LRSRenameFileLibrary {
 		boolean restart = true;
 		String delimiter = new LRSOperationalSystem().getFilePathSeparator();
 		String[] onePath;
-		String cPathToRename = new String(delimiter);
+		String cPathToRename = new String("");
 		
 		new LRSConsoleOut("Fix Directory and Files names STARTED over ".concat(rootPath));
 		
 		while (restart) {
-		
+			
 			//Get a list of dirs and files inside rootPath
 			List<String> listOfFiles = new ArrayList<>();
 			Files.walk(Paths.get(rootPath))
@@ -95,13 +95,22 @@ public class LRSRenameFileLibrary {
 			//Set the flag of restart as False
 			restart = false;
 			
+			new LRSConsoleOut(" Starting analysis over ".concat(rootPath));
+			
 			for (int nFiles = 0; nFiles < listOfFiles.size(); nFiles++) {
 			
-				onePath = listOfFiles.get(nFiles).split("*");
-			        
+				onePath = listOfFiles.get(nFiles).split(delimiter);
+				cPathToRename = "";
+				
+				new LRSConsoleOut(" Starting analysis over ".concat(rootPath));
+	    						
 			    for (int nSubFolders = 0; nSubFolders < onePath.length; nSubFolders++) {
 			    	
+			    	new LRSConsoleOut(" I'll check if needs rename ".concat(cPathToRename.concat(onePath[nSubFolders])));
+			    	
 			    	if (this.needToRename(onePath[nSubFolders])) {
+			    		
+			    		new LRSConsoleOut(" I'll try rename ".concat(cPathToRename.concat(onePath[nSubFolders])));
 			    		
 			    		this.setOldName(cPathToRename.concat(onePath[nSubFolders]));
 			    		this.setNewName(cPathToRename.concat(this.renameTo(onePath[nSubFolders])));
@@ -111,6 +120,8 @@ public class LRSRenameFileLibrary {
 			    		break;
 			    	} else {
 			    		cPathToRename = cPathToRename.concat(onePath[nSubFolders]).concat(delimiter);
+			    		new LRSConsoleOut(" Not needed rename ".concat(cPathToRename.concat(onePath[nSubFolders])));
+			    		restart = false;
 			    	}
 			    }
 			    
@@ -118,6 +129,7 @@ public class LRSRenameFileLibrary {
 			    	break;
 			    }
 			}
+			
 		}
 		new LRSConsoleOut("Fix Directory and Files names FINISHED over ".concat(rootPath));
 	}
