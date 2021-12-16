@@ -51,6 +51,7 @@ public class LRSRenameFileLibrary {
 		specialCharsList.add(new LRSSpecialCharsTranslate("á","a"));
 		specialCharsList.add(new LRSSpecialCharsTranslate("à","a"));
 		specialCharsList.add(new LRSSpecialCharsTranslate("ã","a"));
+		specialCharsList.add(new LRSSpecialCharsTranslate("ãã","a"));
 		specialCharsList.add(new LRSSpecialCharsTranslate("é","e"));
 		specialCharsList.add(new LRSSpecialCharsTranslate("ẽ","e"));
 		specialCharsList.add(new LRSSpecialCharsTranslate("í","i"));
@@ -72,7 +73,7 @@ public class LRSRenameFileLibrary {
 			
 			specialCharsList.add(upperChar);
 		}
-		
+				
 		return specialCharsList;
 	}
 	
@@ -138,6 +139,9 @@ public class LRSRenameFileLibrary {
 		boolean needed = false;
 		
 		for (int nI = 0; nI < this.specialChars.size(); nI++) {
+			
+			new LRSConsoleOut("DIRNAME: ".concat(sourceFile).concat(" CHAR: ").concat(this.specialChars.get(nI).getCharFrom()));
+			
 			if (sourceFile.trim().contains(this.specialChars.get(nI).getCharFrom()) ) {
 				needed = true;
 				break;
