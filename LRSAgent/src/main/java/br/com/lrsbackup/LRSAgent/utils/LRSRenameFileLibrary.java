@@ -2,8 +2,10 @@ package br.com.lrsbackup.LRSAgent.utils;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.List;
 import br.com.lrsbackup.LRSManager.util.LRSConsoleOut;
@@ -42,7 +44,7 @@ public class LRSRenameFileLibrary {
 		this.newName = newName;
 	}
 	
-	private ArrayList<LRSSpecialCharsTranslate> getSpecialCharsList(){
+	public ArrayList<LRSSpecialCharsTranslate> getSpecialCharsList(){
 
 		ArrayList<LRSSpecialCharsTranslate> specialCharsList = new ArrayList<>();
 		LRSSpecialCharsTranslate lowerChar = new LRSSpecialCharsTranslate();
@@ -51,15 +53,22 @@ public class LRSRenameFileLibrary {
 		specialCharsList.add(new LRSSpecialCharsTranslate("á","a"));
 		specialCharsList.add(new LRSSpecialCharsTranslate("à","a"));
 		specialCharsList.add(new LRSSpecialCharsTranslate("ã","a"));
-		specialCharsList.add(new LRSSpecialCharsTranslate("ãã","a"));
+		specialCharsList.add(new LRSSpecialCharsTranslate("ä","a"));
+		specialCharsList.add(new LRSSpecialCharsTranslate("@","a"));
 		specialCharsList.add(new LRSSpecialCharsTranslate("é","e"));
 		specialCharsList.add(new LRSSpecialCharsTranslate("ẽ","e"));
+		specialCharsList.add(new LRSSpecialCharsTranslate("ê","e"));
 		specialCharsList.add(new LRSSpecialCharsTranslate("í","i"));
 		specialCharsList.add(new LRSSpecialCharsTranslate("ĩ","i"));	
 		specialCharsList.add(new LRSSpecialCharsTranslate("ó","o"));
 		specialCharsList.add(new LRSSpecialCharsTranslate("õ","o"));
 		specialCharsList.add(new LRSSpecialCharsTranslate("ú","u"));
 		specialCharsList.add(new LRSSpecialCharsTranslate("ũ","u"));
+		specialCharsList.add(new LRSSpecialCharsTranslate("ü","u"));
+		specialCharsList.add(new LRSSpecialCharsTranslate("ğ","u"));
+		
+		
+		
 		specialCharsList.add(new LRSSpecialCharsTranslate("ç","c"));
 
 		
@@ -79,70 +88,80 @@ public class LRSRenameFileLibrary {
 	
 	public void fixDir(String rootPath) throws IOException {
 		boolean restart = true;
+		boolean isWindows = new LRSOperationalSystem().isWindows();
 		String delimiter = new LRSOperationalSystem().getFilePathSeparator();
+		
 		String[] onePath;
 		String cPathToRename = new String("");
 		
-		new LRSConsoleOut("Fix Directory and Files names STARTED over ".concat(rootPath));
 		
-		while (restart) {
-			
-			//Get a list of dirs and files inside rootPath
-			List<String> listOfFiles = new ArrayList<>();
-			Files.walk(Paths.get(rootPath))
-	        .filter(Files::isRegularFile)
-	        .forEach(x -> listOfFiles.add(x.toString()));
-			
-			//Set the flag of restart as False
-			restart = false;
-			
-			new LRSConsoleOut(" Starting analysis over ".concat(rootPath));
-			
-			for (int nFiles = 0; nFiles < listOfFiles.size(); nFiles++) {
-			
-				onePath = listOfFiles.get(nFiles).split(delimiter);
-				cPathToRename = "";
+		if (isWindows) {
+		
+			new LRSConsoleOut("Fix Directory and Files names STARTED over ".concat(rootPath));
+	
+			while (restart) {
 				
-				new LRSConsoleOut(" Starting analysis over ".concat(rootPath));
-	    						
-			    for (int nSubFolders = 0; nSubFolders < onePath.length; nSubFolders++) {
-			    	
-			    	new LRSConsoleOut(" I'll check if needs rename ".concat(cPathToRename.concat(onePath[nSubFolders])));
-			    	
-			    	if (this.needToRename(onePath[nSubFolders])) {
-			    		
-			    		new LRSConsoleOut(" I'll try rename ".concat(cPathToRename.concat(onePath[nSubFolders])));
-			    		
-			    		this.setOldName(cPathToRename.concat(onePath[nSubFolders]));
-			    		this.setNewName(cPathToRename.concat(this.renameTo(onePath[nSubFolders])));
-			    		this.renameFile();
-			    		
-			    		restart = true;
-			    		break;
-			    	} else {
-			    		cPathToRename = cPathToRename.concat(onePath[nSubFolders]).concat(delimiter);
-			    		new LRSConsoleOut(" Not needed rename ".concat(cPathToRename.concat(onePath[nSubFolders])));
-			    		restart = false;
-			    	}
-			    }
-			    
-			    if (restart) {
-			    	break;
-			    }
+				//Get a list of dirs and files inside rootPath
+				List<String> listOfFiles = new ArrayList<>();
+				Files.walk(Paths.get(rootPath))
+		        .filter(Files::isRegularFile)
+		        .forEach(x -> listOfFiles.add(x.toString()));
+				
+				//Set the flag of restart as False
+				restart = false;
+				
+				for (int nFiles = 0; nFiles < listOfFiles.size(); nFiles++) {
+					
+					try {
+						onePath = listOfFiles.get(nFiles).split(delimiter);
+					
+						cPathToRename = "";
+						
+						for (int nSubFolders = 0; nSubFolders < onePath.length; nSubFolders++) {
+							
+					    	if (this.needToRename(onePath[nSubFolders])) {
+					    		
+					    		new LRSConsoleOut(" I'll try rename ".concat(cPathToRename.concat(onePath[nSubFolders])));
+					    		
+					    		this.setOldName(cPathToRename.concat(onePath[nSubFolders]));
+					    		this.setNewName(cPathToRename.concat(this.renameTo(onePath[nSubFolders])));
+					    		this.renameFile();
+					    		
+					    		restart = true;
+					    		break;
+					    	} else {
+					    		cPathToRename = cPathToRename.concat(onePath[nSubFolders]).concat(delimiter);
+					    		//new LRSConsoleOut(" Not needed rename ".concat(cPathToRename));
+					    		restart = false;
+					    	}
+					    }
+					    
+					    if (restart) {
+					    	break;
+					    }
+				    
+					}  catch (Exception e) {
+	                    e.printStackTrace();
+	                }
+					
+				}
+				
 			}
-			
+			new LRSConsoleOut("Fix Directory and Files names FINISHED over ".concat(rootPath));
+		
+		} else {
+			new LRSConsoleOut("Fix Directory is allowed only in Microsoft Windows environments");
 		}
-		new LRSConsoleOut("Fix Directory and Files names FINISHED over ".concat(rootPath));
 	}
 	
-	public boolean needToRename(String sourceFile) {
+	public boolean needToRename(String sourceFile) throws UnsupportedEncodingException {
 		boolean needed = false;
+		
+		String fileName = sourceFile;
 		
 		for (int nI = 0; nI < this.specialChars.size(); nI++) {
 			
-			new LRSConsoleOut("DIRNAME: ".concat(sourceFile).concat(" CHAR: ").concat(this.specialChars.get(nI).getCharFrom()));
-			
-			if (sourceFile.trim().contains(this.specialChars.get(nI).getCharFrom()) ) {
+			if (fileName.contains(this.specialChars.get(nI).getCharFrom()) ) {
 				needed = true;
 				break;
 			}
@@ -150,16 +169,14 @@ public class LRSRenameFileLibrary {
 		return needed;
 	}
 	
-	public String renameTo(String sourceFile) {
+	public String renameTo(String sourceFile) throws UnsupportedEncodingException {
 	
 		String originalName = new String(sourceFile);
 		
 		for (int nI = 0; nI < this.specialChars.size(); nI++) {
-			
-			if (originalName.trim().contains(this.specialChars.get(nI).getCharFrom()) ) {
-				originalName = originalName.replace(this.specialChars.get(nI).getCharFrom(), this.specialChars.get(nI).getCharDest());
-			}
-		}	
+			originalName = originalName.replaceAll(this.specialChars.get(nI).getCharFrom(), this.specialChars.get(nI).getCharDest());
+		}
+
 		return originalName;
 	}
 	

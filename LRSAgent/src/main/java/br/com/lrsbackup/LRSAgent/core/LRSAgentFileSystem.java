@@ -32,6 +32,7 @@ public class LRSAgentFileSystem {
 	
 	public void startMonitor() throws InterruptedException, IOException{
 		RestTemplate restTemplate = new RestTemplate();
+		String delimiter = new LRSOperationalSystem().getFilePathSeparator();
 		
 		while (true) {
 			
@@ -56,15 +57,18 @@ public class LRSAgentFileSystem {
 			for (int nI = 0; nI < protectedDirs.directories.size(); nI++) {
 				
 				String cDirPath = protectedDirs.directories.get(nI).getOriginPath();
-				new LRSConsoleOut("WORKING OVER DIRECTORY: ".concat(cDirPath));
-
+				
+				
 				//If the option to rename special chars in any file is active, then check all inside protected dir and rename
 				if (this.renameFilesIsActive) {
 					LRSRenameFileLibrary filesToRename = new LRSRenameFileLibrary();
 					filesToRename.fixDir(cDirPath);
+					Thread.sleep(30000);
 				}
 				
 				//Get all files present inside protected dir
+				new LRSConsoleOut("WORKING OVER DIRECTORY: ".concat(cDirPath));
+		
 				List<String> listOfFiles = new ArrayList<>();
 				Files.walk(Paths.get(cDirPath))
 		        .filter(Files::isRegularFile)
@@ -79,7 +83,7 @@ public class LRSAgentFileSystem {
 					
 					LRSFileDetails fileDetails = new LRSFileDetails(fileName);
 					
-					String cPureFileName = fileName.replaceAll(cDirPath.concat("/"),"");
+					String cPureFileName = fileName.replaceAll(cDirPath.concat(delimiter),"");
 					String storageRepoName = protectedDirs.directories.get(nI).getStorageRepositoryName();
 					String destinationFileName = this.getDestinationPathCleaned(storageRepoName,fileName); 
 					String storageURI = new String();
