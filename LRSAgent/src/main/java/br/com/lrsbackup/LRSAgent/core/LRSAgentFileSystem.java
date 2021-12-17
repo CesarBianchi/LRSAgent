@@ -51,7 +51,7 @@ public class LRSAgentFileSystem {
 			new LRSConsoleOut("AWS IS ON: ".concat(String.valueOf(publicClouds.isAwsOn()).toUpperCase()));
 			new LRSConsoleOut("AZURE IS ON: ".concat(String.valueOf(publicClouds.isAzureOn()).toUpperCase()));
 			new LRSConsoleOut("ORACLE IS ON: ".concat(String.valueOf(publicClouds.isOracleOn()).toUpperCase()));
-			new LRSConsoleOut("TOTAL LOCAL DIRECTORIES MONITORED: ".concat(Integer.toString(protectedDirs.directories.size())));
+			new LRSConsoleOut("TOTAL OF PROTECTED DIRECTORIES MONITORED: ".concat(Integer.toString(protectedDirs.directories.size())));
 			
 			//2* For each directory returned, verify all files present.
 			for (int nI = 0; nI < protectedDirs.directories.size(); nI++) {
@@ -63,7 +63,7 @@ public class LRSAgentFileSystem {
 				if (this.renameFilesIsActive) {
 					LRSRenameFileLibrary filesToRename = new LRSRenameFileLibrary();
 					filesToRename.fixDir(cDirPath);
-					Thread.sleep(30000);
+					Thread.sleep(5000);
 				}
 				
 				//Get all files present inside protected dir

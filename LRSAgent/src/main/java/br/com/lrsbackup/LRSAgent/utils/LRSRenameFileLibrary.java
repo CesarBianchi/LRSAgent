@@ -51,26 +51,40 @@ public class LRSRenameFileLibrary {
 		LRSSpecialCharsTranslate upperChar = new LRSSpecialCharsTranslate();
 		
 		specialCharsList.add(new LRSSpecialCharsTranslate("á","a"));
+		specialCharsList.add(new LRSSpecialCharsTranslate("Á","A"));
+		specialCharsList.add(new LRSSpecialCharsTranslate("À́","A"));
 		specialCharsList.add(new LRSSpecialCharsTranslate("à","a"));
 		specialCharsList.add(new LRSSpecialCharsTranslate("ã","a"));
 		specialCharsList.add(new LRSSpecialCharsTranslate("ä","a"));
+		specialCharsList.add(new LRSSpecialCharsTranslate("â","a"));
 		specialCharsList.add(new LRSSpecialCharsTranslate("@","a"));
 		specialCharsList.add(new LRSSpecialCharsTranslate("é","e"));
 		specialCharsList.add(new LRSSpecialCharsTranslate("ẽ","e"));
+		
+		specialCharsList.add(new LRSSpecialCharsTranslate("ë","e"));
+		
+		
 		specialCharsList.add(new LRSSpecialCharsTranslate("ê","e"));
+		specialCharsList.add(new LRSSpecialCharsTranslate("É","E"));
 		specialCharsList.add(new LRSSpecialCharsTranslate("í","i"));
 		specialCharsList.add(new LRSSpecialCharsTranslate("ĩ","i"));	
+		specialCharsList.add(new LRSSpecialCharsTranslate("Í","I"));	
 		specialCharsList.add(new LRSSpecialCharsTranslate("ó","o"));
 		specialCharsList.add(new LRSSpecialCharsTranslate("õ","o"));
+		specialCharsList.add(new LRSSpecialCharsTranslate("ö","o"));
+		specialCharsList.add(new LRSSpecialCharsTranslate("ô","o"));
+		specialCharsList.add(new LRSSpecialCharsTranslate("ö̂","o"));
+		specialCharsList.add(new LRSSpecialCharsTranslate("ö̂","o"));
 		specialCharsList.add(new LRSSpecialCharsTranslate("ú","u"));
+		specialCharsList.add(new LRSSpecialCharsTranslate("Ú","U"));
 		specialCharsList.add(new LRSSpecialCharsTranslate("ũ","u"));
 		specialCharsList.add(new LRSSpecialCharsTranslate("ü","u"));
 		specialCharsList.add(new LRSSpecialCharsTranslate("ğ","u"));
-		
-		
-		
 		specialCharsList.add(new LRSSpecialCharsTranslate("ç","c"));
 
+		
+		
+		
 		
 		//Add in the same list the same chars in Upper Case!
 		ArrayList<LRSSpecialCharsTranslate> lowerChars = (ArrayList<LRSSpecialCharsTranslate>) specialCharsList.clone();
