@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.List;
 import br.com.lrsbackup.LRSManager.util.LRSConsoleOut;
@@ -60,10 +59,7 @@ public class LRSRenameFileLibrary {
 		specialCharsList.add(new LRSSpecialCharsTranslate("@","a"));
 		specialCharsList.add(new LRSSpecialCharsTranslate("é","e"));
 		specialCharsList.add(new LRSSpecialCharsTranslate("ẽ","e"));
-		
 		specialCharsList.add(new LRSSpecialCharsTranslate("ë","e"));
-		
-		
 		specialCharsList.add(new LRSSpecialCharsTranslate("ê","e"));
 		specialCharsList.add(new LRSSpecialCharsTranslate("É","E"));
 		specialCharsList.add(new LRSSpecialCharsTranslate("í","i"));
@@ -73,6 +69,7 @@ public class LRSRenameFileLibrary {
 		specialCharsList.add(new LRSSpecialCharsTranslate("õ","o"));
 		specialCharsList.add(new LRSSpecialCharsTranslate("ö","o"));
 		specialCharsList.add(new LRSSpecialCharsTranslate("ô","o"));
+		specialCharsList.add(new LRSSpecialCharsTranslate("ô","o"));
 		specialCharsList.add(new LRSSpecialCharsTranslate("ö̂","o"));
 		specialCharsList.add(new LRSSpecialCharsTranslate("ö̂","o"));
 		specialCharsList.add(new LRSSpecialCharsTranslate("ú","u"));
@@ -81,15 +78,35 @@ public class LRSRenameFileLibrary {
 		specialCharsList.add(new LRSSpecialCharsTranslate("ü","u"));
 		specialCharsList.add(new LRSSpecialCharsTranslate("ğ","u"));
 		specialCharsList.add(new LRSSpecialCharsTranslate("ç","c"));
-
-		
-		
-		
+		specialCharsList.add(new LRSSpecialCharsTranslate("Ñ","N"));
+		specialCharsList.add(new LRSSpecialCharsTranslate("ô","o"));
+		specialCharsList.add(new LRSSpecialCharsTranslate("ñ","n"));
+		specialCharsList.add(new LRSSpecialCharsTranslate("–","-"));
+		specialCharsList.add(new LRSSpecialCharsTranslate("Ã","A"));
+		specialCharsList.add(new LRSSpecialCharsTranslate("°"," "));
+		specialCharsList.add(new LRSSpecialCharsTranslate("Ã","A"));
+		specialCharsList.add(new LRSSpecialCharsTranslate("Ó","O"));
+		specialCharsList.add(new LRSSpecialCharsTranslate("ó","o"));
+		specialCharsList.add(new LRSSpecialCharsTranslate("á","a"));
+		specialCharsList.add(new LRSSpecialCharsTranslate("Á","A"));
+		specialCharsList.add(new LRSSpecialCharsTranslate("é","e"));
+		specialCharsList.add(new LRSSpecialCharsTranslate("É","E"));
+		specialCharsList.add(new LRSSpecialCharsTranslate("í","i"));
+		specialCharsList.add(new LRSSpecialCharsTranslate("Í","I"));
+		specialCharsList.add(new LRSSpecialCharsTranslate("Ó","O"));
+		specialCharsList.add(new LRSSpecialCharsTranslate("ó","o"));
+		specialCharsList.add(new LRSSpecialCharsTranslate("ú","u"));
+		specialCharsList.add(new LRSSpecialCharsTranslate("Ú","U"));
+		specialCharsList.add(new LRSSpecialCharsTranslate("ã","a"));
+		specialCharsList.add(new LRSSpecialCharsTranslate("Ã","A"));
+		specialCharsList.add(new LRSSpecialCharsTranslate("õ","o"));
+		specialCharsList.add(new LRSSpecialCharsTranslate("Õ","O"));
+		specialCharsList.add(new LRSSpecialCharsTranslate("Ç","C"));
+		specialCharsList.add(new LRSSpecialCharsTranslate("ç","c"));
 		
 		//Add in the same list the same chars in Upper Case!
 		ArrayList<LRSSpecialCharsTranslate> lowerChars = (ArrayList<LRSSpecialCharsTranslate>) specialCharsList.clone();
 		for (int nI=0; nI< lowerChars.size(); nI++) {
-			
 			lowerChar = lowerChars.get(nI);
 			upperChar.setCharFrom(lowerChar.getCharFrom().toUpperCase());
 			upperChar.setCharDest(lowerChar.getCharDest().toUpperCase());
@@ -103,11 +120,12 @@ public class LRSRenameFileLibrary {
 	public void fixDir(String rootPath) throws IOException {
 		boolean restart = true;
 		boolean isWindows = new LRSOperationalSystem().isWindows();
-		String delimiter = new LRSOperationalSystem().getFilePathSeparator();
+		String delimiter = "\\\\"; //new LRSOperationalSystem().getFilePathSeparator();
 		
 		String[] onePath;
 		String cPathToRename = new String("");
 		
+		this.specialChars = getSpecialCharsList();
 		
 		if (isWindows) {
 		
@@ -125,38 +143,31 @@ public class LRSRenameFileLibrary {
 				restart = false;
 				
 				for (int nFiles = 0; nFiles < listOfFiles.size(); nFiles++) {
-					
-					try {
-						onePath = listOfFiles.get(nFiles).split(delimiter);
-					
-						cPathToRename = "";
+
+					onePath = listOfFiles.get(nFiles).split(delimiter);
+					cPathToRename = "";
+				
+					for (int nSubFolders = 0; nSubFolders < onePath.length; nSubFolders++) {
 						
-						for (int nSubFolders = 0; nSubFolders < onePath.length; nSubFolders++) {
-							
-					    	if (this.needToRename(onePath[nSubFolders])) {
-					    		
-					    		new LRSConsoleOut(" I'll try rename ".concat(cPathToRename.concat(onePath[nSubFolders])));
-					    		
-					    		this.setOldName(cPathToRename.concat(onePath[nSubFolders]));
-					    		this.setNewName(cPathToRename.concat(this.renameTo(onePath[nSubFolders])));
-					    		this.renameFile();
-					    		
-					    		restart = true;
-					    		break;
-					    	} else {
-					    		cPathToRename = cPathToRename.concat(onePath[nSubFolders]).concat(delimiter);
-					    		//new LRSConsoleOut(" Not needed rename ".concat(cPathToRename));
-					    		restart = false;
-					    	}
-					    }
-					    
-					    if (restart) {
-					    	break;
-					    }
+				    	if (this.needToRename(onePath[nSubFolders])) {
+				    		
+				    		new LRSConsoleOut(" I'll try rename ".concat(cPathToRename.concat(onePath[nSubFolders])));
+				    		
+				    		this.setOldName(cPathToRename.concat(onePath[nSubFolders]));
+				    		this.setNewName(cPathToRename.concat(this.renameTo(onePath[nSubFolders])));
+				    		this.renameFile();
+				    		
+				    		restart = true;
+				    		break;
+				    	} else {
+				    		cPathToRename = cPathToRename.concat(onePath[nSubFolders]).concat(delimiter);
+				    		restart = false;
+				    	}
+				    }
 				    
-					}  catch (Exception e) {
-	                    e.printStackTrace();
-	                }
+				    if (restart) {
+				    	break;
+				    }
 					
 				}
 				
@@ -168,7 +179,7 @@ public class LRSRenameFileLibrary {
 		}
 	}
 	
-	public boolean needToRename(String sourceFile) throws UnsupportedEncodingException {
+	public boolean needToRename(String sourceFile) {
 		boolean needed = false;
 		
 		String fileName = sourceFile;
@@ -176,6 +187,7 @@ public class LRSRenameFileLibrary {
 		for (int nI = 0; nI < this.specialChars.size(); nI++) {
 			
 			if (fileName.contains(this.specialChars.get(nI).getCharFrom()) ) {
+				new LRSConsoleOut("Needs rename ".concat(sourceFile));
 				needed = true;
 				break;
 			}
@@ -183,7 +195,7 @@ public class LRSRenameFileLibrary {
 		return needed;
 	}
 	
-	public String renameTo(String sourceFile) throws UnsupportedEncodingException {
+	public String renameTo(String sourceFile) {
 	
 		String originalName = new String(sourceFile);
 		
