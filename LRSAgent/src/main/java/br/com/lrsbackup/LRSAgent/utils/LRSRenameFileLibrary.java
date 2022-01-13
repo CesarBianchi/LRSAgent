@@ -103,6 +103,20 @@ public class LRSRenameFileLibrary {
 		specialCharsList.add(new LRSSpecialCharsTranslate("Õ","O"));
 		specialCharsList.add(new LRSSpecialCharsTranslate("Ç","C"));
 		specialCharsList.add(new LRSSpecialCharsTranslate("ç","c"));
+		specialCharsList.add(new LRSSpecialCharsTranslate("â","a"));
+		specialCharsList.add(new LRSSpecialCharsTranslate("Â","A"));
+		specialCharsList.add(new LRSSpecialCharsTranslate("Ê","E"));
+		specialCharsList.add(new LRSSpecialCharsTranslate("ê","e"));
+		specialCharsList.add(new LRSSpecialCharsTranslate("î","i"));
+		specialCharsList.add(new LRSSpecialCharsTranslate("Î","I"));
+		specialCharsList.add(new LRSSpecialCharsTranslate("Ô","O"));
+		specialCharsList.add(new LRSSpecialCharsTranslate("ô","o"));
+		specialCharsList.add(new LRSSpecialCharsTranslate("û","u"));
+		specialCharsList.add(new LRSSpecialCharsTranslate("Û","U"));
+		specialCharsList.add(new LRSSpecialCharsTranslate("º",""));
+		specialCharsList.add(new LRSSpecialCharsTranslate("´",""));
+		specialCharsList.add(new LRSSpecialCharsTranslate("ª",""));
+		
 		
 		//Add in the same list the same chars in Upper Case!
 		ArrayList<LRSSpecialCharsTranslate> lowerChars = (ArrayList<LRSSpecialCharsTranslate>) specialCharsList.clone();
