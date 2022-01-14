@@ -63,7 +63,7 @@ public class LRSAgentFileSystem {
 				if (this.renameFilesIsActive) {
 					LRSRenameFileLibrary filesToRename = new LRSRenameFileLibrary();
 					filesToRename.fixDir(cDirPath);
-					Thread.sleep(5000);
+					Thread.sleep(2000);
 				}
 				
 				//Get all files present inside protected dir
@@ -128,8 +128,8 @@ public class LRSAgentFileSystem {
 				
 			}
 			
-			new LRSConsoleOut("Sleeping time! I'll return to working in three minutes. Be patience and drink a beer!");	
-			Thread.sleep(1800000);
+			new LRSConsoleOut("Sleeping time! I'll return to working in 15 minutes. Be patience and go drink a beer while it!");	
+			Thread.sleep(900000);
 			
 		}
 		
@@ -171,7 +171,7 @@ public class LRSAgentFileSystem {
 		catch(Exception e) {
 			new LRSConsoleOut("WARNING: Something was wrong while trying sent file ".concat(fileName).concat(" We will try again in next working cycle"));
 		}
-		Thread.sleep(200);
+		Thread.sleep(100);
 		
 		return;
 	}

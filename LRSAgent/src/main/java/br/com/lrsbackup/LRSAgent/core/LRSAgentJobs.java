@@ -61,7 +61,7 @@ public class LRSAgentJobs {
 			} catch(Exception e) {
 				new LRSConsoleOut("WARNING: LRS Manager not found or not ready");
 			}
-			Thread.sleep(180000);
+			//Thread.sleep(180000);
 		}
 		
 	}
@@ -76,7 +76,7 @@ public class LRSAgentJobs {
 			} catch(Exception e) {
 				new LRSConsoleOut("WARNING: LRS Manager not found or not ready");
 			}
-			Thread.sleep(180000);
+			//Thread.sleep(90000);
 		}
 	}
 
