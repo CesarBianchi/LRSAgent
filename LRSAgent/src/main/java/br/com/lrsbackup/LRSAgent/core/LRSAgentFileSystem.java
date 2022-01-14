@@ -83,7 +83,15 @@ public class LRSAgentFileSystem {
 					
 					LRSFileDetails fileDetails = new LRSFileDetails(fileName);
 					
-					String cPureFileName = fileName.replaceAll(cDirPath.concat(delimiter),"");
+					String protDirPath = new String();
+					if (cDirPath.substring(cDirPath.length()-1,cDirPath.length()).equals(delimiter)){
+						protDirPath = cDirPath;
+					} else {
+						protDirPath = cDirPath.concat(delimiter);
+					}
+					
+					
+					String cPureFileName = fileName.replaceAll(protDirPath,"");
 					String storageRepoName = protectedDirs.directories.get(nI).getStorageRepositoryName();
 					String destinationFileName = this.getDestinationPathCleaned(storageRepoName,fileName); 
 					String storageURI = new String();
@@ -163,7 +171,7 @@ public class LRSAgentFileSystem {
 		catch(Exception e) {
 			new LRSConsoleOut("WARNING: Something was wrong while trying sent file ".concat(fileName).concat(" We will try again in next working cycle"));
 		}
-		Thread.sleep(500);
+		Thread.sleep(200);
 		
 		return;
 	}
