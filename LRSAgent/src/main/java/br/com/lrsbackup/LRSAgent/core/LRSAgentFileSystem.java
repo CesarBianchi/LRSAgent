@@ -171,7 +171,7 @@ public class LRSAgentFileSystem {
 		catch(Exception e) {
 			new LRSConsoleOut("WARNING: Something was wrong while trying sent file ".concat(fileName).concat(" We will try again in next working cycle"));
 		}
-		Thread.sleep(100);
+		//Thread.sleep(100);
 		
 		return;
 	}
