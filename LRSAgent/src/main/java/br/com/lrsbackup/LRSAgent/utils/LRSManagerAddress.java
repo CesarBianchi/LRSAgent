@@ -10,13 +10,12 @@ public class LRSManagerAddress {
 	}
 
 	private void setLRSManagerURI() {
-		boolean inEclipse = !(System.getenv("eclipse42") == null);
 		
-		if (inEclipse) {
-			this.LRSManagerURI = "http://127.0.0.1:6001/LRSManager";
-		} else {
-			this.LRSManagerURI = "http://192.168.0.101:6001/LRSManager"; //TODO - Not HARDCODED
-		}
+		//NOTE: Don't forget to add "LRSManagerPath" as Environment Variable (including docker environments)
+		//Example 01: http://<your_IP_Address>:<port>/LRSBackup/LRSManager (If you want using any API Gateway)
+		//Example 01: http://<your_IP_Address>:<port>/LRSManager (If you don't want using API Gateway, call LRSManager directly)
+		
+		this.LRSManagerURI = System.getenv("LRSManagerPath");
 		
 	}
 
