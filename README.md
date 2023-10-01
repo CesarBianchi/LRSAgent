@@ -1,5 +1,7 @@
 # LRSAgent
 
+## This project has reached its end of life, and is now just preserved here for posterity.
+
 LRSAgent is a part of LRSBackup Solution, responsible to working in pair with LRSManager and verifing all files inside local disk that needs be uploaded to Public Cloud (just directories defined as 'Protected'), as Amazon AWS, Azure or Oracle Cloud. For it, the LRSAgent works like an 'background application' find files in all Protected Defined Directories by user.
 
 ## Getting Started (for developers)
